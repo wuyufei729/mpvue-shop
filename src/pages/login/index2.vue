@@ -7,9 +7,6 @@
             <span class="circle circle2"></span>
             <span class="circle circle3"></span>
             <span class="circle circle4"></span>
-            <!-- <span class="circle"></span>
-            <span class="circle"></span>
-            <span class="circle"></span> -->
 		</div>
         <div class="bottom">
             <div class="input-phone">
@@ -17,24 +14,22 @@
                     <input type="number" placeholder="手机号"/>
                 </p>
                 <div class="get-code">
-                    <label>获取验证码</label>
+                    <label v-if="timerStatus == 0" @click="getPhoneNum()">获取验证码 </label>
+                    <label v-if="timerStatus == 1">{{seconds}} (s)</label>
+                    <label v-if="timerStatus == 2" @click="getPhoneNum()">重新发送</label>
+                    
                 </div>
             </div>
-            <div class="input-code" ref="inputCode">
-                <span>{{codeList!=null&&codeList.length>0?codeList[0]:''}}</span>
+            <div class="input-code" ref="inputCode" v-if="codeMaxLength != null">
+                <span v-for="(item,i) in codeMaxLength" :key="i">{{codeList!=null&&codeList.length>i?codeList[i]:''}}</span>
+                <!-- <span>{{codeList!=null&&codeList.length>0?codeList[0]:''}}</span>
                 <span>{{codeList!=null&&codeList.length>1?codeList[1]:''}}</span>
                 <span>{{codeList!=null&&codeList.length>2?codeList[2]:''}}</span>
-                <span>{{codeList!=null&&codeList.length>3?codeList[3]:''}}</span>
-                <input type="text" class="plateInput" v-model="code" >
+                <span>{{codeList!=null&&codeList.length>3?codeList[3]:''}}</span> -->
+                <input type="text" class="plateInput" v-model="codeList" >
             </div>
-
+            <button class="login-btn" open-type="getUserInfo" lang="zh_CN" @getuserinfo="handlerLogin">登录</button>
         </div>
-		<!-- <button
-			class="login-btn"
-			open-type="getUserInfo"
-			lang="zh_CN"
-			@getuserinfo="doLogin"
-		>微信登录2</button> -->
 	</div>
 </template>
 
@@ -43,37 +38,42 @@ import { host } from "../../utils";
 import bgImg from '../../../static/images/logo_gh.png'
 var qcloud = require("wafer2-client-sdk/index.js");
 export default {
-	created() { },
-	mounted() {
-		console.log(host);
-
-		qcloud.setLoginUrl(host + "/login");
-		// wx.login({success: function(res) {
-		//   debugger
-		// }})
-	},
 	data() {
 		return {
             bgImg:bgImg,
-            focusIndex: 0,
-            code: null,
-            codeList: null,
-            codeMaxLength: 4,
+            codeList: null,//输入的验证码
+            codeMaxLength: 4,//验证码长度
+
+            timerStatus: 0,
+            defaultSeconds: 10,
+            seconds: 0,
+            postCodeTimer: null,
         };
     },
     watch: {
-        code(newName, oldName) {
-            this.codeList = newName;
-            if(this.codeList.length == this.codeMaxLength){
-                this.handlerLogin();
+        codeList(newName, oldName) {
+            //当输入位数到达设定时候
+            if(this.codeList != null && this.codeList.length > this.codeMaxLength){
+                this.codeList = oldName;
+                //this.handlerLogin();
             }
         }
     },
+    
+    mounted() {
+		console.log(host);
+
+		//qcloud.setLoginUrl(host + "/login");
+		// wx.login({success: function(res) {
+		//   debugger
+        // }})
+	},
 	
 	methods: {
 
+        
         handlerLogin(){
-            
+             
             wx.showLoading({
 				title: "登录中...", //提示的内容,
 				mask: true, //显示透明蒙层，防止触摸穿透,
@@ -81,10 +81,10 @@ export default {
             });
             setTimeout(()=>{
                 wx.hideLoading();
-                wx.navigateTo({
-                    url: "/pages/index/main"
+                wx.switchTab({
+                    url: "../index/main"
                 });
-            },3000)
+            },1000)
 
         },
 
@@ -127,9 +127,31 @@ export default {
 					}
 				});
 			}
-		}
+        },
+        
+        /**
+         * 点击获取验证码
+         */
+        getPhoneNum(){
+            this.timerStatus = 1;
+            this.initTimer();
+        },
+        
+        /**
+         * 验证码倒计时
+         */
+        initTimer() {
+            this.seconds = this.defaultSeconds;
+            this.postCodeTimer = setInterval(()=>{
+                if(this.seconds == 0){
+                    clearInterval(this.postCodeTimer);
+                    this.timerStatus = 2;
+                }
+                this.seconds -= 1;
+            },1000)
+        },
+
 	},
-	computed: {}
 };
 
 </script>

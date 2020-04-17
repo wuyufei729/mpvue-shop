@@ -23,6 +23,7 @@
       </div>
     </div>
     <div class="brand">
+      {{testValueCom}}
       <div @click="tobrandList" class="head">
         品牌制造商直供
       </div>
@@ -130,7 +131,7 @@ export default {
   onShow() {
   },
   computed: {
-    ...mapState(["cityName"])
+    ...mapState(["cityName"]),
   },
   mounted() {
     this.getCityName();
@@ -144,7 +145,8 @@ export default {
       newGoods: [],
       hotGoods: [],
       topicList: [],
-      newCategoryList: []
+      newCategoryList: [],
+      testValue: 'hello',
     };
   },
   components: {},

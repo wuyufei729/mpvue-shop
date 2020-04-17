@@ -95,7 +95,7 @@
       },
       toLogin() {
         if (!this.userInfo.avatarUrl) {
-          wx.navigateTo({
+          wx.redirectTo({
             url: "/pages/login/main"
           });
         }

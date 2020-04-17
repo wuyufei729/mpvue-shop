@@ -22,6 +22,8 @@ export default {
   config: {
     // 页面前带有 ^ 符号的，会被编译成首页，其他页面可以选填，我们会自动把 webpack entry 里面的入口页面加进去
     "pages": [
+      "pages/experience/main", 
+      "^pages/login/main", 
       "pages/feedback/main", 
       "pages/order/main", 
       "pages/cart/main", 
@@ -33,7 +35,6 @@ export default {
       "pages/index/main",
       "pages/search/main", 
       "pages/my/main",
-      "^pages/login/main", 
       "pages/category/main", 
       "pages/categorylist/main", 
       "pages/topic/main",
@@ -47,9 +48,9 @@ export default {
     ],
     "window": {
       "backgroundTextStyle": "light",
-      "navigationBarBackgroundColor": "#fff",
-      "navigationBarTitleText": "科比",
-      "navigationBarTextStyle": "black"
+      "navigationBarBackgroundColor": "#052880",
+      "navigationBarTextStyle": "white",
+      "navigationBarTitleText": "防止电信诈骗",
     },
     "tabBar": {
       "backgroundColor": "#fafafa",
